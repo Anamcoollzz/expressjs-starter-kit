@@ -1,0 +1,15 @@
+{
+  "hello": "Halo",
+  "dashboard": "Dasbor",
+  "students": "Mahasiswa",
+  "create": "Tambah",
+  "edit": "Ubah",
+  "delete": "Hapus",
+  "save": "Simpan",
+  "update": "Perbarui",
+  "name": "Nama",
+  "nim": "NIM",
+  "email": "Email",
+  "photo": "Foto",
+  "actions": "Aksi"
+}

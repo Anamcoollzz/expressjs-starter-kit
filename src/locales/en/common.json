@@ -1,0 +1,15 @@
+{
+  "hello": "Hello",
+  "dashboard": "Dashboard",
+  "students": "Students",
+  "create": "Create",
+  "edit": "Edit",
+  "delete": "Delete",
+  "save": "Save",
+  "update": "Update",
+  "name": "Name",
+  "nim": "NIM",
+  "email": "Email",
+  "photo": "Photo",
+  "actions": "Actions"
+}

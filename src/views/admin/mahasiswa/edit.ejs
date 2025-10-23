@@ -1,0 +1,22 @@
+<h3 class="mb-3"><%= t('edit') %> Mahasiswa</h3>
+<form method="post" action="/admin/mahasiswa/<%= item.id %>" class="row g-3">
+  <div class="col-md-6">
+    <label class="form-label"><%= t('name') %></label>
+    <input name="nama" class="form-control" value="<%= item.nama %>" required />
+  </div>
+  <div class="col-md-6">
+    <label class="form-label"><%= t('nim') %></label>
+    <input name="nim" class="form-control" value="<%= item.nim %>" required />
+  </div>
+  <div class="col-md-6">
+    <label class="form-label"><%= t('email') %></label>
+    <input type="email" name="email" class="form-control" value="<%= item.email %>" required />
+  </div>
+  <div class="col-md-6">
+    <label class="form-label"><%= t('photo') %></label>
+    <input name="foto" class="form-control" value="<%= item.foto || '' %>" />
+  </div>
+  <div class="col-12">
+    <button class="btn btn-primary"><%= t('update') %></button>
+  </div>
+</form>

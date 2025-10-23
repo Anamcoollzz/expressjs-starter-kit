@@ -1,0 +1,41 @@
+<div class="d-flex justify-content-between align-items-center mb-3">
+  <h3 class="m-0"><%= t('students') %></h3>
+  <a class="btn btn-primary" href="/admin/mahasiswa/create"><%= t('create') %></a>
+</div>
+
+<form class="row g-2 mb-3">
+  <div class="col-auto">
+    <input type="text" class="form-control" name="q" placeholder="Search..." value="<%= typeof query !== 'undefined' ? query.q : '' %>">
+  </div>
+  <div class="col-auto">
+    <button class="btn btn-outline-secondary">Filter</button>
+  </div>
+</form>
+
+<table class="table table-striped">
+  <thead>
+    <tr>
+      <th>#</th>
+      <th><%= t('name') %></th>
+      <th><%= t('nim') %></th>
+      <th><%= t('email') %></th>
+      <th><%= t('actions') %></th>
+    </tr>
+  </thead>
+  <tbody>
+    <% items.forEach((it, idx) => { %>
+      <tr>
+        <td><%= idx + 1 %></td>
+        <td><%= it.nama %></td>
+        <td><%= it.nim %></td>
+        <td><%= it.email %></td>
+        <td class="d-flex gap-2">
+          <a class="btn btn-sm btn-warning" href="/admin/mahasiswa/<%= it.id %>/edit"><%= t('edit') %></a>
+          <form method="post" action="/admin/mahasiswa/<%= it.id %>/delete" onsubmit="return confirm('Delete?')">
+            <button class="btn btn-sm btn-danger"><%= t('delete') %></button>
+          </form>
+        </td>
+      </tr>
+    <% }) %>
+  </tbody>
+</table>

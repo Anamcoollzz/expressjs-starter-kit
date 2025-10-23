@@ -1,0 +1,52 @@
+{
+  "name": "express-mahasiswa-api",
+  "version": "1.0.0",
+  "private": true,
+  "type": "module",
+  "scripts": {
+    "dev": "ts-node-dev --respawn --transpile-only src/server.ts",
+    "build": "tsc",
+    "start": "node dist/server.js",
+    "lint": "eslint . --ext .ts",
+    "db:migrate": "sequelize db:migrate --config config/config.cjs",
+    "db:seed": "sequelize db:seed:all --config config/config.cjs",
+    "db:undo": "sequelize db:migrate:undo:all --config config/config.cjs && sequelize db:seed:undo:all --config config/config.cjs"
+  },
+  "dependencies": {
+    "bcryptjs": "^2.4.3",
+    "cookie-parser": "^1.4.7",
+    "csurf": "^1.11.0",
+    "dotenv": "^16.4.5",
+    "ejs": "^3.1.10",
+    "express": "^4.21.1",
+    "express-rate-limit": "^7.3.1",
+    "express-session": "^1.18.0",
+    "helmet": "^8.0.0",
+    "i18next": "^24.0.2",
+    "i18next-express-middleware": "^1.11.5",
+    "i18next-fs-backend": "^2.3.1",
+    "jsonwebtoken": "^9.0.2",
+    "mysql2": "^3.11.3",
+    "pg": "^8.13.1",
+    "sequelize": "^6.37.3",
+    "sequelize-cli": "^6.6.2",
+    "slugify": "^1.6.6",
+    "express-ejs-layouts": "^2.5.1"
+  },
+  "devDependencies": {
+    "@types/bcryptjs": "^2.4.6",
+    "@types/cookie-parser": "^1.4.8",
+    "@types/csurf": "^1.11.5",
+    "@types/express": "^4.17.21",
+    "@types/express-session": "^1.18.1",
+    "@types/jsonwebtoken": "^9.0.6",
+    "@types/node": "^22.7.9",
+    "eslint": "^8.57.0",
+    "eslint-config-prettier": "^9.1.0",
+    "eslint-plugin-import": "^2.29.1",
+    "prettier": "^3.3.3",
+    "ts-node": "^10.9.2",
+    "ts-node-dev": "^2.0.0",
+    "typescript": "^5.6.3"
+  }
+}
