@@ -1,0 +1,23 @@
+<main class="container py-5" style="max-width: 480px;">
+  <div class="card shadow-sm">
+    <div class="card-body">
+      <h3 class="mb-3 text-center"><%= t('auth.loginTitle') %></h3>
+      <% if (error) { %>
+        <div class="alert alert-danger"><%= error %></div>
+      <% } %>
+      <form method="post" action="/admin/login" class="row g-3">
+        <div class="col-12">
+          <label class="form-label"><%= t('table.email') %></label>
+          <input type="email" name="email" class="form-control" required />
+        </div>
+        <div class="col-12">
+          <label class="form-label">Password</label>
+          <input type="password" name="password" class="form-control" required />
+        </div>
+        <div class="col-12 d-grid">
+          <button class="btn btn-primary"><%= t("btn.login") %></button>
+        </div>
+      </form>
+    </div>
+  </div>
+</main>

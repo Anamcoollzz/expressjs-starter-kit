@@ -1,0 +1,48 @@
+<h3 class="mb-3">Payment Detail</h3>
+<div class="mb-3">
+  <a class="btn btn-secondary" href="/admin/payments"><%= t("btn.back") %></a>
+</div>
+<div class="row g-3">
+  <div class="col-md-6">
+    <div class="card">
+      <div class="card-body">
+        <h5 class="card-title"><%= t('table.summary') %></h5>
+        <ul class="list-unstyled mb-0">
+          <li><strong>ID:</strong> <%= item.id %></li>
+          <li><strong>Order ID:</strong> <code><%= item.orderId %></code></li>
+          <li><strong>Amount:</strong> Rp <%= item.amount %></li>
+          <li><strong>Status:</strong> <%= item.status || '-' %></li>
+          <li><strong>Type:</strong> <%= item.paymentType || '-' %></li>
+          <li><strong>Trans ID:</strong> <%= item.transactionId || '-' %></li>
+          <li><strong>Fraud:</strong> <%= item.fraudStatus || '-' %></li>
+          <li><strong>Updated:</strong> <%= item.updatedAt.toISOString().slice(0,19).replace('T',' ') %></li>
+        </ul>
+      </div>
+    </div>
+  </div>
+  <div class="col-md-6">
+    <div class="card">
+      <div class="card-body">
+        <h5 class="card-title">VA Numbers</h5>
+        <pre class="mb-0"><%= JSON.stringify(item.vaNumbers, null, 2) %></pre>
+      </div>
+    </div>
+  </div>
+
+  <div class="col-12">
+    <div class="card">
+      <div class="card-body">
+        <h5 class="card-title"><%= t('table.rawRequest') %></h5>
+        <pre class="mb-0"><%= JSON.stringify(item.rawRequest, null, 2) %></pre>
+      </div>
+    </div>
+  </div>
+  <div class="col-12">
+    <div class="card">
+      <div class="card-body">
+        <h5 class="card-title"><%= t('table.rawResponse') %></h5>
+        <pre class="mb-0"><%= JSON.stringify(item.rawResponse, null, 2) %></pre>
+      </div>
+    </div>
+  </div>
+</div>

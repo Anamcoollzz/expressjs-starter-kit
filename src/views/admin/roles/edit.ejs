@@ -1,0 +1,16 @@
+<h3 class="mb-3">Edit Role</h3>
+<form method="post" action="/admin/roles/<%= item.id %>" class="row g-3">
+  <div class="col-md-6"><label class="form-label">Name</label><input name="name" class="form-control" value="<%= item.name %>" required></div>
+  <div class="col-12">
+    <label class="form-label">Permissions</label>
+    <div class="row row-cols-2">
+      <% perms.forEach(p => { %>
+        <div class="col"><div class="form-check">
+          <input class="form-check-input" type="checkbox" name="permissions" value="<%= p.id %>" id="p<%= p.id %>" <%= (item.Permissions||[]).some(pp => pp.id===p.id) ? 'checked' : '' %>>
+          <label class="form-check-label" for="p<%= p.id %>"><%= p.name %></label>
+        </div></div>
+      <% }) %>
+    </div>
+  </div>
+  <div class="col-12"><button class="btn btn-primary">Update</button></div>
+</form>

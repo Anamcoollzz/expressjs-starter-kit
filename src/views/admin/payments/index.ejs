@@ -1,0 +1,101 @@
+<h3 class="mb-3">Payments</h3>
+<div class="mb-3 d-flex gap-2"> <a class="btn btn-outline-secondary btn-sm" href="/admin/export/payments?format=csv"><%= t('export.csv') %></a> <a class="btn btn-outline-secondary btn-sm" href="/admin/export/payments?format=xlsx"><%= t('export.excel') %></a> <a class="btn btn-outline-secondary btn-sm" href="/admin/export/payments?format=pdf"><%= t('export.pdf') %></a></div>
+<form class="row g-2 mb-3">
+  <div class="col-auto">
+    <select name="status" class="form-select">
+      <option value=""><%= t('filter.statusAll') %></option>
+      <option value="pending" <%= (query && query.status==='pending')?'selected':'' %>>pending</option>
+      <option value="settlement" <%= (query && query.status==='settlement')?'selected':'' %>>settlement</option>
+      <option value="expire" <%= (query && query.status==='expire')?'selected':'' %>>expire</option>
+      <option value="cancel" <%= (query && query.status==='cancel')?'selected':'' %>>cancel</option>
+      <option value="deny" <%= (query && query.status==='deny')?'selected':'' %>>deny</option>
+    </select>
+  </div>
+  <div class="col-auto">
+    <select name="paymentType" class="form-select">
+      <option value=""><%= t('filter.typeAll') %></option>
+      <option value="bank_transfer" <%= (query && query.paymentType==='bank_transfer')?'selected':'' %>>bank_transfer</option>
+      <option value="echannel" <%= (query && query.paymentType==='echannel')?'selected':'' %>>echannel</option>
+      <option value="gopay" <%= (query && query.paymentType==='gopay')?'selected':'' %>>gopay</option>
+      <option value="qris" <%= (query && query.paymentType==='qris')?'selected':'' %>>qris</option>
+    </select>
+  </div>
+  <div class="col-auto">
+    <input type="date" name="updatedAt_from" class="form-control" value="<%= (query && query.updatedAt_from) || '' %>" />
+  </div>
+  <div class="col-auto">
+    <input type="date" name="updatedAt_to" class="form-control" value="<%= (query && query.updatedAt_to) || '' %>" />
+  </div>
+  <div class="col-auto">
+    <select name="limit" class="form-select">
+      <option value="10" <%= (!query || (query && query.limit=='10'))?'selected':'' %>>10</option>
+      <option value="25" <%= (query && query.limit=='25')?'selected':'' %>>25</option>
+      <option value="50" <%= (query && query.limit=='50')?'selected':'' %>>50</option>
+      <option value="100" <%= (query && query.limit=='100')?'selected':'' %>>100</option>
+    </select>
+  </div>
+  <div class="col-auto">
+    <input type="text" class="form-control" name="q" placeholder="Search order/status/type..." value="<%= typeof query !== 'undefined' ? query.q : '' %>">
+  </div>
+  <div class="col-auto">
+    <button class="btn btn-outline-secondary"><%= t("btn.filter") %></button>
+  </div>
+</form>
+
+<table class="table table-striped">
+  <thead>
+    <tr>
+      <th>#</th>
+      <th><%= t('table.orderId') %></th>
+      <th><%= t('table.amount') %></th>
+      <th><%= t('table.status') %></th>
+      <th><%= t('table.type') %></th>
+      <th><%= t('table.updatedAt') %></th>
+      <th></th>
+    </tr>
+  </thead>
+  <tbody>
+    <% items.forEach((it, idx) => { %>
+      <tr>
+        <td><%= ((page-1)*(limit||10)) + idx + 1 %></td>
+        <td><code><%= it.orderId %></code></td>
+        <td>Rp <%= it.amount %></td>
+        <td><span class="badge text-bg-<%= (it.status||'').includes('settlement') ? 'success' : (it.status==='pending'?'warning':'secondary') %>"><%= it.status || '-' %></span></td>
+        <td><%= it.paymentType || '-' %></td>
+        <td><%= it.updatedAt.toISOString().slice(0,19).replace('T',' ') %></td>
+        <td><a class="btn btn-sm btn-primary" href="/admin/payments/<%= it.id %>">Detail</a></td>
+      </tr>
+    <% }) %>
+  </tbody>
+</table>
+
+
+<script>
+  document.querySelectorAll('a[href*="/admin/export/"]').forEach(a => {
+    const url = new URL(a.href, window.location.origin);
+    const current = new URLSearchParams(window.location.search);
+    // copy q, sort, order, page into export link
+    ["q","sort","order"].forEach(k => { if (current.get(k)) url.searchParams.set(k, current.get(k)); });
+    a.href = url.toString();
+  });
+</script>
+
+<%
+// simple pagination
+const totalPages = Math.max(1, Math.ceil((count || 0) / (limit || 10)));
+function qLink(p){
+  const u = new URLSearchParams(query || {});
+  u.set('page', String(p));
+  if (!u.get('limit')) u.set('limit', String(limit || 10));
+  return `?${u.toString()}`;
+}
+%>
+<nav aria-label="Pagination">
+  <ul class="pagination">
+    <li class="page-item <%= (page<=1)?'disabled':'' %>"><a class="page-link" href="<%= qLink(page-1) %>">Prev</a></li>
+    <% for(let i=1;i<=totalPages;i++){ %>
+      <li class="page-item <%= (i===page)?'active':'' %>"><a class="page-link" href="<%= qLink(i) %>"><%= i %></a></li>
+    <% } %>
+    <li class="page-item <%= (page>=totalPages)?'disabled':'' %>"><a class="page-link" href="<%= qLink(page+1) %>">Next</a></li>
+  </ul>
+</nav>

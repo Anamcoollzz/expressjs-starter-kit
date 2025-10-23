@@ -1,15 +1,51 @@
 {
-  "hello": "Halo",
-  "dashboard": "Dasbor",
-  "students": "Mahasiswa",
-  "create": "Tambah",
-  "edit": "Ubah",
-  "delete": "Hapus",
-  "save": "Simpan",
-  "update": "Perbarui",
-  "name": "Nama",
-  "nim": "NIM",
-  "email": "Email",
-  "photo": "Foto",
-  "actions": "Aksi"
+  "app": {
+    "title": "Admin"
+  },
+  "nav": {
+    "home": "Beranda",
+    "mahasiswa": "Mahasiswa",
+    "users": "Pengguna",
+    "roles": "Peran",
+    "payments": "Pembayaran",
+    "logout": "Keluar"
+  },
+  "btn": {
+    "create": "Tambah",
+    "edit": "Ubah",
+    "delete": "Hapus",
+    "back": "Kembali",
+    "filter": "Saring",
+    "login": "Masuk"
+  },
+  "export": {
+    "csv": "Ekspor CSV",
+    "excel": "Ekspor Excel",
+    "pdf": "Ekspor PDF"
+  },
+  "filter": {
+    "statusAll": "Status (semua)",
+    "typeAll": "Tipe (semua)",
+    "sortBy": "Urutkan",
+    "asc": "Naik",
+    "desc": "Turun"
+  },
+  "table": {
+    "actions": "Aksi",
+    "updatedAt": "Diubah",
+    "createdAt": "Dibuat",
+    "status": "Status",
+    "type": "Tipe",
+    "amount": "Jumlah",
+    "orderId": "Order ID",
+    "name": "Nama",
+    "email": "Email",
+    "nim": "NIM",
+    "summary": "Ringkasan",
+    "rawRequest": "Permintaan Mentah",
+    "rawResponse": "Respons / Status Terakhir"
+  },
+  "auth": {
+    "loginTitle": "Masuk Admin"
+  }
 }

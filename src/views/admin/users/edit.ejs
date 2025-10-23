@@ -1,0 +1,23 @@
+<% if (!item) { %>
+<div class="alert alert-warning">User not found.</div>
+<a class="btn btn-secondary" href="/admin/users"><%= t("btn.back") %></a>
+<% } else { %>
+<h3 class="mb-3">Edit User</h3>
+<% if (error) { %><div class="alert alert-danger"><%= error %></div><% } %>
+<form method="post" action="/admin/users/<%= item.id %>" class="row g-3">
+  <div class="col-md-6"><label class="form-label"><%= t('table.name') %></label><input name="name" class="form-control" value="<%= item.name %>" required></div>
+  <div class="col-md-6"><label class="form-label"><%= t('table.email') %></label><input type="email" name="email" class="form-control" value="<%= item.email %>" required></div>
+  <div class="col-md-6"><label class="form-label">Password (leave blank to keep)</label><input type="password" name="password" class="form-control"></div>
+  <div class="col-md-6">
+    <label class="form-label">Role</label>
+    <select name="roleId" class="form-select">
+      <option value="">(none)</option>
+      <% roles.forEach(r => { %>
+        <option value="<%= r.id %>" <%= (item.Roles||[]).some(rr => rr.id===r.id) ? 'selected' : '' %>><%= r.name %></option>
+      <% }) %>
+    </select>
+  </div>
+  <div class="col-12"><button class="btn btn-primary">Update</button></div>
+</form>
+
+<% } %>

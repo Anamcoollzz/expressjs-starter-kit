@@ -10,7 +10,7 @@ export async function dashboard(req: Request, res: Response) {
 export async function mahasiswaIndex(req: Request, res: Response) {
   const { limit, offset, where, order, page } = Object.assign(buildListParams(req.query as any, ["nama", "nim", "email"]), { page: req.query.page || 1 });
   const { rows, count } = await Mahasiswa.findAndCountAll({ limit, offset, where, order });
-  res.render("admin/mahasiswa/index", { title: "Mahasiswa", items: rows, count, limit, page: Number(page) });
+  res.render("admin/mahasiswa/index", { title: "Mahasiswa", items: rows, count, limit, page: Number(page), query: req.query });
 }
 
 export async function mahasiswaCreate(req: Request, res: Response) {

@@ -1,0 +1,84 @@
+<h3 class="mb-3">Users</h3>
+<form class="row g-2 mb-3">
+  <div class="col-auto"><input class="form-control" type="text" name="q" placeholder="Search name/email..." value="<%= (query && query.q) || '' %>"></div>
+  <div class="col-auto">
+    <select name="sort" class="form-select">
+      <option value=""><%= t('filter.sortBy') %></option>
+      <option value="createdAt" <%= (query && query.sort==='createdAt')?'selected':'' %>><%= t('table.createdAt') %></option>
+      <option value="name" <%= (query && query.sort==='name')?'selected':'' %>>Name/Title</option>
+    </select>
+  </div>
+  <div class="col-auto">
+    <select name="order" class="form-select">
+      <option value="asc" <%= (query && query.order==='asc')?'selected':'' %>><%= t('filter.asc') %></option>
+      <option value="desc" <%= (!query || query.order==='desc')?'selected':'' %>><%= t('filter.desc') %></option>
+    </select>
+  </div>
+  <div class="col-auto">
+    <select name="role" class="form-select">
+      <option value="">All Roles</option>
+      <option value="admin" <%= (query && query.role==='admin')?'selected':'' %>>Admin</option>
+      <option value="user"  <%= (query && query.role==='user')?'selected':'' %>>User</option>
+    </select>
+  </div>
+  <div class="col-auto">
+    <select name="limit" class="form-select">
+      <option value="10" <%= (!query || (query && query.limit=='10'))?'selected':'' %>>10</option>
+      <option value="25" <%= (query && query.limit=='25')?'selected':'' %>>25</option>
+      <option value="50" <%= (query && query.limit=='50')?'selected':'' %>>50</option>
+      <option value="100" <%= (query && query.limit=='100')?'selected':'' %>>100</option>
+    </select>
+  </div>
+  <div class="col-auto"><button class="btn btn-outline-secondary"><%= t("btn.filter") %></button></div>
+</form>
+<div class="mb-2 d-flex gap-2"><a class="btn btn-primary" href="/admin/users/create"><%= t("btn.create") %></a> <a class="btn btn-outline-secondary btn-sm" href="/admin/export/users?format=csv"><%= t('export.csv') %></a> <a class="btn btn-outline-secondary btn-sm" href="/admin/export/users?format=xlsx"><%= t('export.excel') %></a> <a class="btn btn-outline-secondary btn-sm" href="/admin/export/users?format=pdf"><%= t('export.pdf') %></a></div>
+<table class="table table-striped">
+  <thead><tr><th>#</th><th><%= t('table.name') %></th><th><%= t('table.email') %></th><th>Roles</th><th><%= t('table.actions') %></th></tr></thead>
+  <tbody>
+  <% items.forEach((u, idx) => { %>
+    <tr>
+      <td><%= idx+1 %></td>
+      <td><%= u.name %></td>
+      <td><%= u.email %></td>
+      <td><%= (u.Roles || []).map(r => r.name).join(", ") %></td>
+      <td class="d-flex gap-2">
+        <a class="btn btn-sm btn-warning" href="/admin/users/<%= u.id %>/edit"><%= t("btn.edit") %></a>
+        
+          \1 type="submit">\2</button>
+        </form>
+      </td>
+    </tr>
+  <% }) %>
+  </tbody>
+</table>
+
+
+<script>
+  document.querySelectorAll('a[href*="/admin/export/"]').forEach(a => {
+    const url = new URL(a.href, window.location.origin);
+    const current = new URLSearchParams(window.location.search);
+    // copy q, sort, order, page into export link
+    ["q","sort","order"].forEach(k => { if (current.get(k)) url.searchParams.set(k, current.get(k)); });
+    a.href = url.toString();
+  });
+</script>
+
+<%
+// simple pagination
+const totalPages = Math.max(1, Math.ceil((count || 0) / (limit || 10)));
+function qLink(p){
+  const u = new URLSearchParams(query || {});
+  u.set('page', String(p));
+  if (!u.get('limit')) u.set('limit', String(limit || 10));
+  return `?${u.toString()}`;
+}
+%>
+<nav aria-label="Pagination">
+  <ul class="pagination">
+    <li class="page-item <%= (page<=1)?'disabled':'' %>"><a class="page-link" href="<%= qLink(page-1) %>">Prev</a></li>
+    <% for(let i=1;i<=totalPages;i++){ %>
+      <li class="page-item <%= (i===page)?'active':'' %>"><a class="page-link" href="<%= qLink(i) %>"><%= i %></a></li>
+    <% } %>
+    <li class="page-item <%= (page>=totalPages)?'disabled':'' %>"><a class="page-link" href="<%= qLink(page+1) %>">Next</a></li>
+  </ul>
+</nav>

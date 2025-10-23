@@ -1,18 +1,18 @@
-<div class="d-flex justify-content-between align-items-center mb-3">
-  <h3 class="m-0"><%= t('students') %></h3>
-  <a class="btn btn-primary" href="/admin/mahasiswa/create"><%= t('create') %></a>
-</div>
-<div class="mb-3 d-flex gap-2">
-  <a class="btn btn-sm btn-outline-secondary" href="/admin/export/mahasiswa?format=csv"><%= t('export.csv') %></a>
-  <a class="btn btn-sm btn-outline-secondary" href="/admin/export/mahasiswa?format=xlsx"><%= t('export.excel') %></a>
-  <a class="btn btn-sm btn-outline-secondary" href="/admin/export/mahasiswa?format=pdf"><%= t('export.pdf') %></a>
-</div>
-
-<div class="small text-muted">Gunakan parameter <code>?cols=</code> untuk kolom khusus, contoh: <code>?cols=id,nama,nim</code>.</div>
-
+<h3 class="mb-3">Roles</h3>
 <form class="row g-2 mb-3">
+  <div class="col-auto"><input class="form-control" type="text" name="q" placeholder="Search role name..." value="<%= (query && query.q) || '' %>"></div>
   <div class="col-auto">
-    <input type="text" class="form-control" name="q" placeholder="Search..." value="<%= typeof query !== 'undefined' ? query.q : '' %>">
+    <select name="sort" class="form-select">
+      <option value=""><%= t('filter.sortBy') %></option>
+      <option value="createdAt" <%= (query && query.sort==='createdAt')?'selected':'' %>><%= t('table.createdAt') %></option>
+      <option value="name" <%= (query && query.sort==='name')?'selected':'' %>>Name/Title</option>
+    </select>
+  </div>
+  <div class="col-auto">
+    <select name="order" class="form-select">
+      <option value="asc" <%= (query && query.order==='asc')?'selected':'' %>><%= t('filter.asc') %></option>
+      <option value="desc" <%= (!query || query.order==='desc')?'selected':'' %>><%= t('filter.desc') %></option>
+    </select>
   </div>
   <div class="col-auto">
     <select name="limit" class="form-select">
@@ -24,32 +24,23 @@
   </div>
   <div class="col-auto"><button class="btn btn-outline-secondary"><%= t("btn.filter") %></button></div>
 </form>
-
+<div class="mb-2 d-flex gap-2"><a class="btn btn-primary" href="/admin/roles/create"><%= t("btn.create") %></a> <a class="btn btn-outline-secondary btn-sm" href="/admin/export/roles?format=csv"><%= t('export.csv') %></a> <a class="btn btn-outline-secondary btn-sm" href="/admin/export/roles?format=xlsx"><%= t('export.excel') %></a> <a class="btn btn-outline-secondary btn-sm" href="/admin/export/roles?format=pdf"><%= t('export.pdf') %></a></div>
 <table class="table table-striped">
-  <thead>
-    <tr>
-      <th>#</th>
-      <th><%= t('name') %></th>
-      <th><%= t('nim') %></th>
-      <th><%= t('email') %></th>
-      <th><%= t('actions') %></th>
-    </tr>
-  </thead>
+  <thead><tr><th>#</th><th><%= t('table.name') %></th><th>Permissions</th><th><%= t('table.actions') %></th></tr></thead>
   <tbody>
-    <% items.forEach((it, idx) => { %>
-      <tr>
-        <td><%= ((page-1)*(limit||10)) + idx + 1 %></td>
-        <td><%= it.nama %></td>
-        <td><%= it.nim %></td>
-        <td><%= it.email %></td>
-        <td class="d-flex gap-2">
-          <a class="btn btn-sm btn-warning" href="/admin/mahasiswa/<%= it.id %>/edit"><%= t('edit') %></a>
-          
-            <button class="btn btn-sm btn-danger"><%= t('delete') %></button>
-          </form>
-        </td>
-      </tr>
-    <% }) %>
+  <% items.forEach((r, idx) => { %>
+    <tr>
+      <td><%= idx+1 %></td>
+      <td><%= r.name %></td>
+      <td><%= (r.Permissions || []).map(p => p.name).join(", ") %></td>
+      <td class="d-flex gap-2">
+        <a class="btn btn-sm btn-warning" href="/admin/roles/<%= r.id %>/edit"><%= t("btn.edit") %></a>
+        
+          \1 type="submit">\2</button>
+        </form>
+      </td>
+    </tr>
+  <% }) %>
   </tbody>
 </table>
 

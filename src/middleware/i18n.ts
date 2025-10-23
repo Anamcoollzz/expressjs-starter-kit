@@ -1,6 +1,6 @@
 import i18next from "i18next";
 import Backend from "i18next-fs-backend";
-import middleware from "i18next-express-middleware";
+import middleware from "i18next-http-middleware";
 import path from "path";
 import { fileURLToPath } from "url";
 
@@ -14,6 +14,7 @@ export async function setupI18n(app: any) {
     .init({
       fallbackLng: process.env.I18N_FALLBACK || "en",
       preload: ["en", "id"],
+      supportedLngs: ["en", "id"],
       backend: {
         loadPath: path.join(__dirname, "..", "locales", "{{lng}}", "common.json")
       },
