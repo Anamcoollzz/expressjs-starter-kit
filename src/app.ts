@@ -1,9 +1,5 @@
-import express from 'express';
-import {
-  i18n,
-  setupI18n,
-  middleware as i18nMiddleware,
-} from './config/i18n.js';
+import express, { NextFunction } from 'express';
+import { i18n, handle } from './config/i18n.js';
 import path from 'path';
 import expressEjsLayouts from 'express-ejs-layouts';
 import { fileURLToPath } from 'url';
@@ -12,8 +8,6 @@ import helmet from 'helmet';
 import cookieParser from 'cookie-parser';
 import session from 'express-session';
 import rateLimit from 'express-rate-limit';
-import { setupI18n } from './middleware/i18n.js';
-import { sequelize } from './config/database.js';
 import authRoutes from './routes/auth.js';
 import mahasiswaRoutes from './routes/mahasiswa.js';
 import adminRoutes from './routes/admin.js';
@@ -40,7 +34,39 @@ const FileStore = FileStoreFactory(session);
 dotenv.config();
 const app = express();
 
-app.use(i18nMiddleware.handle(i18n));
+// ---- Tambah typing untuk session.lang ----
+declare module 'express-session' {
+  interface SessionData {
+    lang?: 'id' | 'en' | string;
+  }
+}
+
+// Session for Admin UI
+app.use(
+  // session({
+  //   secret: process.env.SESSION_SECRET || 'dev_session_secret',
+  //   resave: false,
+  //   saveUninitialized: false,
+  // }),
+  session({
+    name: process.env.SESSION_NAME || 'sid',
+    secret: process.env.SESSION_SECRET!,
+    resave: false,
+    saveUninitialized: false,
+    store: new FileStore({
+      path: path.join(process.cwd(), '.sessions'), // folder file session
+      retries: 1,
+    }),
+    cookie: {
+      maxAge: Number(process.env.SESSION_MAX_AGE) || 1000 * 60 * 60 * 24 * 7,
+      httpOnly: true,
+      sameSite: 'lax',
+      secure: false,
+    },
+  }),
+);
+
+app.use(handle(i18n));
 
 // Expose t (translator) to all EJS views
 app.use((req, res, next) => {
@@ -116,45 +142,61 @@ app.set('view engine', 'ejs');
 app.use(expressEjsLayouts);
 app.set('layout', 'layouts/layout');
 
-// Session for Admin UI
-app.use(
-  // session({
-  //   secret: process.env.SESSION_SECRET || 'dev_session_secret',
-  //   resave: false,
-  //   saveUninitialized: false,
-  // }),
-  session({
-    name: process.env.SESSION_NAME || 'sid',
-    secret: process.env.SESSION_SECRET!,
-    resave: false,
-    saveUninitialized: false,
-    store: new FileStore({
-      path: path.join(process.cwd(), '.sessions'), // folder file session
-      retries: 1,
-    }),
-    cookie: {
-      maxAge: Number(process.env.SESSION_MAX_AGE) || 1000 * 60 * 60 * 24 * 7,
-      httpOnly: true,
-      sameSite: 'lax',
-      secure: false,
-    },
-  }),
-);
-
 app.use((req: any, res, next) => {
-  // Anda bisa expose seluruh session (res.locals.session = req.session)
-  // atau expose only what you need for safety (recommended).
-  res.locals.session = req.session; // raw session (caution)
-  // res.locals.user = req.session?.user ?? null; // contoh: user object
-  // res.locals.lang = req.session?.lang ?? 'id'; // contoh: language setting
+  res.locals.session = req.session;
   next();
 });
 
 // Static
 app.use(express.static(path.join(__dirname, 'public')));
 
+// --- pilih bahasa dari session (prioritas), dengan fallback dari query/lang header ---
+const SUPPORTED = new Set(['id', 'en']);
+
+app.use((req, res, next) => {
+  let chosen = req.session.lang;
+
+  // allow override via query ?lang=id|en (mis. klik tombol switch)
+  const q = (req.query.lang as string | undefined)?.toLowerCase();
+  if (q && SUPPORTED.has(q)) {
+    req.session.lang = q;
+    chosen = q;
+  }
+
+  // fallback pertama kali: dari header Accept-Language
+  if (!chosen) {
+    const header = req.acceptsLanguages()?.[0]?.split('-')[0]?.toLowerCase();
+    chosen = SUPPORTED.has(header || '') ? header : 'id';
+    req.session.lang = chosen;
+  }
+  console.log('Session lang:', chosen);
+  // sinkronkan i18n ke bahasa pilihan
+  // @ts-ignore - `i18n` tersedia via middleware handle()
+  if (req.i18n) req.i18n.changeLanguage(chosen);
+
+  // buat tersedia di EJS
+  // @ts-ignore - `t` tersedia via middleware
+  res.locals.t = req.t;
+  res.locals.lang = chosen;
+
+  next();
+});
+
 // Routes
 app.get('/', (req, res) => res.json({ message: 'API OK' }));
+// --- route untuk switch bahasa secara eksplisit ---
+app.get('/lang/:lng', (req, res) => {
+  const lng = String(req.params.lng).toLowerCase();
+  if (SUPPORTED.has(lng)) {
+    req.session.lang = lng;
+    // @ts-ignore
+    if (req.i18n) req.i18n.changeLanguage(lng);
+  }
+  console.log('Switch lang to:', req.session.lang);
+  // kembali ke halaman sebelumnya atau ke /
+  const back = req.get('referer') || '/';
+  req.session.save(() => res.redirect(back));
+});
 app.use('/api/auth', authRoutes);
 app.use('/api/mahasiswa', mahasiswaRoutes);
 app.use('/api/users', userApiRoutes);
@@ -171,12 +213,6 @@ app.use('/api/export/roles', exportApiRoles);
 app.use('/api/export/payments', exportApiPayments);
 app.use('/api/payments', paymentsRoutes);
 app.use('/api/payments/core', paymentsCoreRoutes);
-
-// Health check DB
-sequelize
-  .authenticate()
-  .then(() => console.log('DB connected'))
-  .catch(console.error);
 
 // Error handler
 app.use(errorHandler);

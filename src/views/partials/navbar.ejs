@@ -5,6 +5,7 @@
       <span class="navbar-toggler-icon"></span>
     </button>
     <div class="collapse navbar-collapse" id="navbarsExample">
+      <% if (session.user) { %>
       <ul class="navbar-nav me-auto mb-2 mb-lg-0">
         <li class="nav-item"><a class="nav-link" href="/admin">
             <%= t('nav.home') %>
@@ -22,29 +23,30 @@
             <%= t('nav.payments') %>
           </a></li>
       </ul>
-      </ul>
+
       <form method="post" action="/admin/logout" class="ms-auto">
         <button class="btn btn-outline-danger btn-sm" type="submit">
           <%= t('nav.logout') %>
         </button>
       </form>
+      <% } %>
 
-      <% const cur=(typeof url !=='undefined' ? url : '/' ); const parts=cur.split('?'); const pathOnly=parts[0]; const
-        qs=new URLSearchParams(parts[1] || '' ); function langHref(code){ qs.set('lang', code); return pathOnly + '?' +
-        qs.toString(); } const curLng=(typeof lng !=='undefined' && lng) ? String(lng) : 'en' ; %>
-        <ul class="navbar-nav ms-auto">
-          <li class="nav-item dropdown">
-            <a class="nav-link dropdown-toggle" href="#" role="button" data-bs-toggle="dropdown" aria-expanded="false">
-              <i class="bi bi-translate"></i> <span class="text-uppercase">
-                <%= curLng %>
-              </span>
-            </a>
-            <ul class="dropdown-menu dropdown-menu-end">
-              <li><a class="dropdown-item" href="<%= langHref('en') %>">English</a></li>
-              <li><a class="dropdown-item" href="<%= langHref('id') %>">Indonesia</a></li>
-            </ul>
-          </li>
-        </ul>
+      <% const cur=(typeof url !=='undefined' ? url : '/' ); const parts=cur.split('?'); const pathOnly=parts[0];
+            const qs=new URLSearchParams(parts[1] || '' ); function langHref(code){ qs.set('lang', code); return
+            pathOnly + '?' + qs.toString(); } const curLng=(typeof lng !=='undefined' && lng) ? String(lng) : 'en' ; %>
+      <ul class="navbar-nav ms-auto">
+        <li class="nav-item dropdown">
+          <a class="nav-link dropdown-toggle" href="#" role="button" data-bs-toggle="dropdown" aria-expanded="false">
+            <i class="bi bi-translate"></i> <span class="text-uppercase">
+              <%= curLng %>
+            </span>
+          </a>
+          <ul class="dropdown-menu dropdown-menu-end">
+            <li><a class="dropdown-item" href="/lang/en">English</a></li>
+            <li><a class="dropdown-item" href="/lang/id">Indonesia</a></li>
+          </ul>
+        </li>
+      </ul>
 
     </div>
 </nav>

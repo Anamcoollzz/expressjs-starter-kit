@@ -23,12 +23,14 @@ export async function doLogin(req: Request, res: Response) {
       title: 'Admin Login',
       error: 'Invalid credentials',
     });
+  console.log('User logged in:', user.email);
   // @ts-ignore
   const token = jwt.sign(
     { id: user.id, role: user.role },
     process.env.JWT_SECRET as string,
     { expiresIn: process.env.JWT_EXPIRES || '1d' },
   );
+  // @ts-ignore
   req.session.user = {
     id: user.id,
     name: user.name,
