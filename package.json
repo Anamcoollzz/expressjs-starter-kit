@@ -4,6 +4,7 @@
   "private": true,
   "type": "module",
   "scripts": {
+    "dev2": "tsx watch --env-file .env --watch src src/server.ts",
     "dev": "tsx watch src/server.ts",
     "build": "tsc",
     "start": "node dist/server.js",
@@ -13,30 +14,31 @@
     "db:undo": "sequelize db:migrate:undo:all --config config/config.cjs && sequelize db:seed:undo:all --config config/config.cjs"
   },
   "dependencies": {
+    "@faker-js/faker": "^8.4.1",
     "bcryptjs": "^2.4.3",
     "cookie-parser": "^1.4.7",
     "csurf": "^1.11.0",
     "dotenv": "^16.4.5",
     "ejs": "^3.1.10",
+    "exceljs": "^4.4.0",
     "express": "^4.21.1",
+    "express-ejs-layouts": "^2.5.1",
     "express-rate-limit": "^7.3.1",
     "express-session": "^1.18.0",
     "helmet": "^8.0.0",
     "i18next": "^24.0.2",
     "i18next-fs-backend": "^2.3.1",
+    "i18next-http-middleware": "^3.6.0",
+    "json2csv": "^6.0.0-alpha.2",
     "jsonwebtoken": "^9.0.2",
+    "midtrans-client": "^1.3.2",
     "mysql2": "^3.11.3",
+    "pdfkit": "^0.15.0",
     "pg": "^8.13.1",
     "sequelize": "^6.37.3",
     "sequelize-cli": "^6.6.2",
+    "session-file-store": "^1.5.0",
     "slugify": "^1.6.6",
-    "express-ejs-layouts": "^2.5.1",
-    "midtrans-client": "^1.3.2",
-    "i18next-http-middleware": "^3.6.0",
-    "exceljs": "^4.4.0",
-    "json2csv": "^6.0.0-alpha.2",
-    "pdfkit": "^0.15.0",
-    "@faker-js/faker": "^8.4.1",
     "sweetalert2": "^11.10.7"
   },
   "devDependencies": {
@@ -53,7 +55,7 @@
     "prettier": "^3.3.3",
     "ts-node": "^10.9.2",
     "ts-node-dev": "^2.0.0",
-    "typescript": "^5.6.3",
-    "tsx": "^4.19.0"
+    "tsx": "^4.19.0",
+    "typescript": "^5.6.3"
   }
 }

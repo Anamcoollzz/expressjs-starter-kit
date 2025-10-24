@@ -1,55 +1,87 @@
 <div class="d-flex justify-content-between align-items-center mb-3">
-  <h3 class="m-0"><%= t('students') %></h3>
-  <a class="btn btn-primary" href="/admin/mahasiswa/create"><%= t('create') %></a>
+  <h3 class="m-0">
+    <%= t('students') %>
+  </h3>
+  <a class="btn btn-primary" href="/admin/mahasiswa/create">
+    <%= t('create') %>
+  </a>
 </div>
 <div class="mb-3 d-flex gap-2">
-  <a class="btn btn-sm btn-outline-secondary" href="/admin/export/mahasiswa?format=csv"><%= t('export.csv') %></a>
-  <a class="btn btn-sm btn-outline-secondary" href="/admin/export/mahasiswa?format=xlsx"><%= t('export.excel') %></a>
-  <a class="btn btn-sm btn-outline-secondary" href="/admin/export/mahasiswa?format=pdf"><%= t('export.pdf') %></a>
+  <a class="btn btn-sm btn-outline-secondary" href="/admin/export/mahasiswa?format=csv">
+    <%= t('export.csv') %>
+  </a>
+  <a class="btn btn-sm btn-outline-secondary" href="/admin/export/mahasiswa?format=xlsx">
+    <%= t('export.excel') %>
+  </a>
+  <a class="btn btn-sm btn-outline-secondary" href="/admin/export/mahasiswa?format=pdf">
+    <%= t('export.pdf') %>
+  </a>
 </div>
 
-<div class="small text-muted">Gunakan parameter <code>?cols=</code> untuk kolom khusus, contoh: <code>?cols=id,nama,nim</code>.</div>
+<!-- <div class="small text-muted">Gunakan parameter <code>?cols=</code> untuk kolom khusus, contoh: <code>?cols=id,nama,nim</code>.</div> -->
 
 <form class="row g-2 mb-3">
   <div class="col-auto">
-    <input type="text" class="form-control" name="q" placeholder="Search..." value="<%= typeof query !== 'undefined' ? query.q : '' %>">
+    <input type="text" class="form-control" name="q" placeholder="Search..."
+      value="<%= typeof query !== 'undefined' ? query.q : '' %>">
   </div>
   <div class="col-auto">
     <select name="limit" class="form-select">
-      <option value="10" <%= (!query || (query && query.limit=='10'))?'selected':'' %>>10</option>
-      <option value="25" <%= (query && query.limit=='25')?'selected':'' %>>25</option>
-      <option value="50" <%= (query && query.limit=='50')?'selected':'' %>>50</option>
-      <option value="100" <%= (query && query.limit=='100')?'selected':'' %>>100</option>
+      <option value="10" <%=(!query || (query && query.limit=='10' ))?'selected':'' %>>10</option>
+      <option value="25" <%=(query && query.limit=='25' )?'selected':'' %>>25</option>
+      <option value="50" <%=(query && query.limit=='50' )?'selected':'' %>>50</option>
+      <option value="100" <%=(query && query.limit=='100' )?'selected':'' %>>100</option>
     </select>
   </div>
-  <div class="col-auto"><button class="btn btn-outline-secondary"><%= t("btn.filter") %></button></div>
+  <div class="col-auto"><button class="btn btn-outline-secondary">
+      <%= t("btn.filter") %>
+    </button></div>
 </form>
 
 <table class="table table-striped">
   <thead>
     <tr>
       <th>#</th>
-      <th><%= t('name') %></th>
-      <th><%= t('nim') %></th>
-      <th><%= t('email') %></th>
-      <th><%= t('actions') %></th>
+      <th>
+        <%= t('name') %>
+      </th>
+      <th>
+        <%= t('nim') %>
+      </th>
+      <th>
+        <%= t('email') %>
+      </th>
+      <th>
+        <%= t('actions') %>
+      </th>
     </tr>
   </thead>
   <tbody>
-    <% items.forEach((it, idx) => { %>
+    <% items.forEach((it, idx)=> { %>
       <tr>
-        <td><%= ((page-1)*(limit||10)) + idx + 1 %></td>
-        <td><%= it.nama %></td>
-        <td><%= it.nim %></td>
-        <td><%= it.email %></td>
+        <td>
+          <%= ((page-1)*(limit||10)) + idx + 1 %>
+        </td>
+        <td>
+          <%= it.nama %>
+        </td>
+        <td>
+          <%= it.nim %>
+        </td>
+        <td>
+          <%= it.email %>
+        </td>
         <td class="d-flex gap-2">
-          <a class="btn btn-sm btn-warning" href="/admin/mahasiswa/<%= it.id %>/edit"><%= t('edit') %></a>
-          
-            <button class="btn btn-sm btn-danger"><%= t('delete') %></button>
-          </form>
+          <a class="btn btn-sm btn-warning" href="/admin/mahasiswa/<%= it.id %>/edit">
+            <%= t('edit') %>
+          </a>
+
+          <a class="btn btn-sm btn-danger" onclick="onDelete(event, '/api/mahasiswa/<%= it.id %>')" href="#">
+            <%= t('delete') %>
+          </a>
         </td>
       </tr>
-    <% }) %>
+      <% }) %>
   </tbody>
 </table>
 
@@ -59,27 +91,24 @@
     const url = new URL(a.href, window.location.origin);
     const current = new URLSearchParams(window.location.search);
     // copy q, sort, order, page into export link
-    ["q","sort","order"].forEach(k => { if (current.get(k)) url.searchParams.set(k, current.get(k)); });
+    ["q", "sort", "order"].forEach(k => { if (current.get(k)) url.searchParams.set(k, current.get(k)); });
     a.href = url.toString();
   });
 </script>
 
-<%
-// simple pagination
-const totalPages = Math.max(1, Math.ceil((count || 0) / (limit || 10)));
-function qLink(p){
-  const u = new URLSearchParams(query || {});
-  u.set('page', String(p));
-  if (!u.get('limit')) u.set('limit', String(limit || 10));
-  return `?${u.toString()}`;
-}
-%>
-<nav aria-label="Pagination">
-  <ul class="pagination">
-    <li class="page-item <%= (page<=1)?'disabled':'' %>"><a class="page-link" href="<%= qLink(page-1) %>">Prev</a></li>
-    <% for(let i=1;i<=totalPages;i++){ %>
-      <li class="page-item <%= (i===page)?'active':'' %>"><a class="page-link" href="<%= qLink(i) %>"><%= i %></a></li>
-    <% } %>
-    <li class="page-item <%= (page>=totalPages)?'disabled':'' %>"><a class="page-link" href="<%= qLink(page+1) %>">Next</a></li>
-  </ul>
-</nav>
+<% const totalPages=Math.max(1, Math.ceil((count || 0) / (limit || 10))); function qLink(p){ const u=new
+  URLSearchParams(query || {}); u.set('page', String(p)); if (!u.get('limit')) u.set('limit', String(limit || 10));
+  return `?${u.toString()}`; } %>
+  <nav aria-label="Pagination">
+    <ul class="pagination">
+      <li class="page-item <%= (page<=1)?'disabled':'' %>"><a class="page-link" href="<%= qLink(page-1) %>">Prev</a>
+      </li>
+      <% for(let i=1;i<=totalPages;i++){ %>
+        <li class="page-item <%= (i===page)?'active':'' %>"><a class="page-link" href="<%= qLink(i) %>">
+            <%= i %>
+          </a></li>
+        <% } %>
+          <li class="page-item <%= (page>=totalPages)?'disabled':'' %>"><a class="page-link"
+              href="<%= qLink(page+1) %>">Next</a></li>
+    </ul>
+  </nav>
